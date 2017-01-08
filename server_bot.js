@@ -21,10 +21,23 @@ server.post('/api/messages', connector.listen());
 //bot dialog; "Hello world!"
 
 bot.dialog('/', [
-    session => {
-        builder.Prompts.text(session, "What is your name?");
+    (session, args, next) => {
+        if (!session.userData.name) {
+            session.beginDialog('/profile');
+        } else {
+            next();
+        }
     },
     (session, results) => {
-        session.send(`Hi ${results.response}`);
+        session.send(`Hi ${session.userData.name}`);
+    }
+]);
+bot.dialog('/profile', [
+    session => {
+        builder.Prompts.text(session, "Hi! What's your name?");
     },
+    (session, results) => {
+        session.userData.name = results.response;
+        session.endDialog();
+    }
 ]);
