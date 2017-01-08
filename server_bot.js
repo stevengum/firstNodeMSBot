@@ -20,6 +20,11 @@ server.post('/api/messages', connector.listen());
 
 //bot dialog; "Hello world!"
 
-bot.dialog('/', session => {
-    session.send("Hello World!");
-});
+bot.dialog('/', [
+    session => {
+        builder.Prompts.text(session, "What is your name?");
+    },
+    (session, results) => {
+        session.send(`Hi ${results.response}`);
+    },
+]);
